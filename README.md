@@ -15,7 +15,7 @@ npm install bower -g
 Inside your project run:
 
 ```
-bower install x-tag-toggle-switch
+bower install x-tag-switch
 ```
 
 This downloads the component and dependencies to ./components
