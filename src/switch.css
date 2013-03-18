@@ -1,4 +1,3 @@
-
 x-switch {
 	display: inline-block;
 	position: relative;
@@ -9,7 +8,7 @@ x-switch {
 	cursor: pointer;
 }
 
-x-switch input {
+x-switch input[type="checkbox"] {
 	position: absolute;
 	border: none;
 	width: 100%;
