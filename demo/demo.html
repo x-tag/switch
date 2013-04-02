@@ -15,7 +15,7 @@
       
       label {
         display: block;
-        color: #fff;
+        
       }
       
       input[type="text"] {
@@ -40,18 +40,51 @@
         background: linear-gradient(top, #f0f0f0, #aaa);
         box-shadow: 0 1px 2px 0px rgba(0,0,0,0.7);
       }
+
+      #tele-demo {
+        background-color: #00C3EA;
+        border-color: rgb(0, 172, 206);
+        -webkit-transition: background-color 0.25s ease, border-color 0.25s ease;
+        -moz-transition: background-color 0.25s ease, border-color 0.25s ease;
+        transition: background-color 0.25s ease, border-color 0.25s ease;
+        color: white;
+        font-size: 22px;
+        line-height: 20px;
+      }
+
+      #tele-demo[checked]  {
+        border-color: #C2C2C2;
+        background-color: #E6E6E6;
+        color: #E6E6E6;
+      }
+
+      #tele-demo .x-switch-background {
+        background: -webkit-linear-gradient(left, #00C3EA 50%, #E6E6E6 50%);
+        background: -moz-linear-gradient(left, #00C3EA 50%, #E6E6E6 50%);
+        background: -ms-linear-gradient(left, #00C3EA 50%, #E6E6E6 50%);
+        background: -o-linear-gradient(left, #00C3EA 50%, #E6E6E6 50%);
+        background: linear-gradient(left, #00C3EA 50%, #E6E6E6 50%);
+      }
+
+      #tele-demo .x-switch-text {
+        padding: 0px 6px;
+      }
 	
     </style>
   </head>
 
   <body>
-    <label for="ontext">On Text</label>
+    <label for="ontext">Active text</label>
     <input name="ontext" id="ontext" type="text" value="" />
     <br/>
-    <label for="offtext">Off Text</label>
+    <label for="offtext">Inactive text</label>
     <input name="offtext" id="offtext" type="text" value="" />
     <br/>
     <x-switch id="demo" onText="Active" offText="Inactive" formName="wifi"></x-switch>
+
+    <h4>Telephonica switch</h4>
+    <x-switch id="tele-demo" onText="✔" offText=" "></x-switch>
+
   </body>
 
   <script type="text/javascript">
