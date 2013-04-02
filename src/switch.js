@@ -57,7 +57,7 @@
         },
         'set:attribute': function(state){
           this.firstElementChild.checked = state;
-          this.setAttribute('checked', this.firstElementChild.checked, true);
+          this.firstElementChild.checked ? this.removeAttribute('checked') : this.setAttribute('checked', null);
         } 
       },
       formName: {
