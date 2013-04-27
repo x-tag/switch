@@ -11,8 +11,8 @@
     "x-tag"
   ],
   "main": [
-    "src/x-switch.js",
-    "src/x-switch.css"
+    "src/switch.js",
+    "src/switch.css"
   ],
   "dependencies": {
     "x-tag-core": "*"
