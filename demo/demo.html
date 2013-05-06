@@ -2,35 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    
+
     <title>Switch Demo - X-Tag</title>
-    
-    <link rel="stylesheet" type="text/css" href="../src/switch.css"/>   
-    
+
+    <link rel="stylesheet" type="text/css" href="../src/switch.css"/>
+
     <script type="text/javascript" src="x-tag-components.js"></script>
 
-    <script type="text/javascript" src="../src/switch.js"></script> 
-      
+    <script type="text/javascript" src="../src/switch.js"></script>
+
     <style type="text/css">
-      
+
       label {
         display: block;
-        
+
       }
-      
+
       input[type="text"] {
         margin: 0 0 10px;
       }
-      
+
       x-switch {
         margin: 10px 0;
         border-radius: 24px;
       }
-      
+
       .x-switch-text {
         padding: 2px 8px;
       }
-      
+
       .x-switch-knob {
         border-radius: 24px;
         background: -webkit-linear-gradient(top, #f0f0f0, #aaa);
@@ -42,29 +42,30 @@
       }
 
       #tele-demo {
-        background-color: #00C3EA;
-        border-color: rgb(0, 172, 206);
+        border-color: #C2C2C2;
+        color: #e6e6e6;
+        background-color: #E6E6E6;
         -webkit-transition: background-color 0.25s ease, border-color 0.25s ease;
         -moz-transition: background-color 0.25s ease, border-color 0.25s ease;
         transition: background-color 0.25s ease, border-color 0.25s ease;
         color: white;
-        font-size: 16px;        
+        font-size: 16px;
       }
 
       #tele-demo[checked]  {
-        border-color: #C2C2C2;
-        background-color: #E6E6E6;
-        color: #E6E6E6;
+        border-color: rgb(0, 172, 206);
+        background-color: #00C3EA;
+        color: #fff;
       }
 
-      #tele-demo .x-switch-background {        
-        background: -moz-linear-gradient(left, #00C3EA 50%, #E6E6E6 50%);        
+      #tele-demo .x-switch-background {
+        background: -moz-linear-gradient(left, #00C3EA 50%, #E6E6E6 50%);
       }
 
       #tele-demo .x-switch-text {
         padding: 0px 6px;
       }
-	
+
     </style>
   </head>
 
@@ -86,22 +87,22 @@
   <script type="text/javascript">
 
     document.addEventListener('DOMComponentsLoaded', function(){
-      
+
       var demo = document.getElementById('demo'),
         ontext = document.getElementById('ontext'),
         offtext = document.getElementById('offtext');
-      
+
       ontext.value = demo.onText;
       offtext.value = demo.offText;
-      
+
       ontext.addEventListener('keyup', function(){
         demo.onText = this.value;
       }, false);
-      
+
       offtext.addEventListener('keyup', function(){
         demo.offText = this.value;
       }, false);
-      
+
     }, false);
 
   </script>
