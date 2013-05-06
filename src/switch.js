@@ -1,5 +1,5 @@
 (function(){
-  
+
   var template =  '<input type="checkbox" />' +
   '<div>' +
     '<div class="x-switch-text" ontext="ON" offtext="OFF"></div>' +
@@ -14,19 +14,19 @@
   '</div>';
 
   function textSetter(state){
-    var obj = {
+    return {
+      attribute: { name: state + 'text' },
       get: function(){
         return this.getAttribute(state + 'text') || state;
+      },
+      set: function(text){
+        xtag.query(this, '[' + state + 'text]').forEach(function(el){
+          el.setAttribute(state + 'text', text);
+        });
       }
     };
-    obj['set:attribute(' + state + 'text)'] = function(text){
-      xtag.query(this, '[' + state + 'text]').forEach(function(el){
-        el.setAttribute(state + 'text', text);
-      });
-    }
-    return obj;
   }
-  
+
   xtag.register('x-switch', {
     lifecycle: {
       created: function(){
@@ -52,19 +52,20 @@
       onText: textSetter('on'),
       offText: textSetter('off'),
       checked: {
+        attribute: { boolean: true },
         get: function(){
           return this.firstElementChild.checked;
         },
-        'set:attribute': function(state){
+        set: function(state){
           this.firstElementChild.checked = state;
-          this.firstElementChild.checked ? this.removeAttribute('checked') : this.setAttribute('checked', null);
-        } 
+        }
       },
       formName: {
+        attribute: { name: 'formname' },
         get: function(){
           return this.firstElementChild.getAttribute('name') || this.getAttribute('formName');
         },
-        'set:attribute(formname)': function(value){
+        set: function(value){
           this.firstElementChild.setAttribute('name', value);
         }
       }

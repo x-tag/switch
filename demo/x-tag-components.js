@@ -1,3 +1,4 @@
+
 if (!(document.register || {}).__polyfill__){
 
   (function(){
@@ -10,31 +11,44 @@ if (!(document.register || {}).__polyfill__){
       mutation = win.MutationObserver || win.WebKitMutationObserver ||  win.MozMutationObserver,
       _createElement = doc.createElement,
       register = function(name, options){
-        if (!tags[name]) tokens.push(name);
-        options = options || {};
+        name = name.toLowerCase();
+        var base,
+            token = name,
+            options = options || {};
+            
+        if (!options.prototype) {
+          throw new Error('Missing required prototype property for registration of the ' + name + ' element');
+        }
+        
         if (options.prototype && !('setAttribute' in options.prototype)) {
           throw new TypeError("Unexpected prototype for " + name + " element - custom element prototypes must inherit from the Element interface");
         }
-        var _prototype = options.prototype || Object.create((win.HTMLSpanElement || win.HTMLElement).prototype),
-            lifecycle = options.lifecycle || {},
-            tag = tags[name] = {
-              'constructor': function(){
-                return doc.createElement(name);
-              },
-              _prototype: doc.__proto__ ? null : unwrapPrototype(_prototype),
-              'prototype': _prototype,
-              'fragment': options.fragment || doc.createDocumentFragment(),
-              'lifecycle': {
-                created: lifecycle.created || function(){},
-                removed: lifecycle.removed || function(){},
-                inserted: lifecycle.inserted || function(){},
-                attributeChanged: lifecycle.attributeChanged || function(){}
-              }
-            };
+        
+        if (options.extends){
+          var ancestor = (tags[options.extends] || _createElement.call(doc, options.extends)).constructor;
+          if (ancestor != (win.HTMLUnknownElement || win.HTMLElement)) {
+            base = options.extends;
+            token = '[is="' + name + '"]';
+          }
+        }
+        
+        if (tokens.indexOf(token) == -1) tokens.push(token);
+        
+        var tag = tags[name] = {
+          base: base,
+          'constructor': function(){
+            return doc.createElement(name);
+          },
+          _prototype: doc.__proto__ ? null : unwrapPrototype(options.prototype),
+          'prototype': options.prototype
+        };
+        
         tag.constructor.prototype = tag.prototype;
+        
         if (domready) query(doc, name).forEach(function(element){
           upgrade(element, true);
         });
+        
         return tag.constructor;
       };
     
@@ -48,8 +62,9 @@ if (!(document.register || {}).__polyfill__){
       return definition;
     }
     
+    var typeObj = {};
     function typeOf(obj) {
-      return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+      return typeObj.toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
     }
     
     function clone(item, type){
@@ -69,7 +84,7 @@ if (!(document.register || {}).__polyfill__){
     
     var unsliceable = ['number', 'boolean', 'string', 'function'];
     function toArray(obj){
-      return unsliceable.indexOf(typeof obj) == -1 ? 
+      return unsliceable.indexOf(typeOf(obj)) == -1 ? 
       Array.prototype.slice.call(obj, 0) :
       [obj];
     }
@@ -79,7 +94,7 @@ if (!(document.register || {}).__polyfill__){
     }
     
     function getTag(element){
-      return element.nodeName ? tags[element.nodeName.toLowerCase()] : false;
+      return element.getAttribute ? tags[element.getAttribute('is') || element.nodeName.toLowerCase()] : false;
     }
     
     function manipulate(element, fn){
@@ -95,33 +110,15 @@ if (!(document.register || {}).__polyfill__){
       }
     }
     
-    function upgrade(element, replace){
-      if (!element._elementupgraded && !element._suppressObservers) {
+    function upgrade(element){
+      if (!element._elementupgraded) {
         var tag = getTag(element);
         if (tag) {
-          var upgraded = element;
-          if (replace) {
-            element._suppressObservers = true;
-            manipulate(element, function(){
-              upgraded = _createElement.call(doc, element.nodeName);
-              upgraded._suppressObservers = true;
-              while (element.firstChild) upgraded.appendChild(element.firstChild);
-              var index = element.attributes.length;
-              while (index--) {
-                var attr = element.attributes[index];
-                upgraded.setAttribute(attr.name, attr.value);
-              }
-              return upgraded;
-            });
-          }
-          if (doc.__proto__) upgraded.__proto__ = tag.prototype;
-          else Object.defineProperties(upgraded, tag._prototype);
-          upgraded.constructor = tag.constructor;
-          upgraded._elementupgraded = true;
-          if (!mutation) delete upgraded._suppressObservers;
-          tag.lifecycle.created.call(upgraded, tag.prototype);
-          if (replace) fireEvent(element, 'elementreplace', { upgrade: upgraded }, { bubbles: false });
-          fireEvent(upgraded, 'elementupgrade');
+          if (doc.__proto__) element.__proto__ = tag.prototype;
+          else Object.defineProperties(element, tag._prototype);
+          element.constructor = tag.constructor;
+          element._elementupgraded = true;
+          if (element.readyCallback) element.readyCallback.call(element, tag.prototype);
         }
       }
     }
@@ -129,14 +126,10 @@ if (!(document.register || {}).__polyfill__){
     function inserted(element, event){
       var tag = getTag(element);
       if (tag){
-        if (!element._elementupgraded) upgrade(element, true);
+        if (!element._elementupgraded) upgrade(element);
         else {
-          if (element._suppressObservers) {
-            delete element._suppressObservers;
-            return element;
-          }
-          if (!element._suppressObservers && doc.documentElement.contains(element)) {
-            tag.lifecycle.inserted.call(element);
+          if (doc.documentElement.contains(element) && element.insertedCallback) {
+            element.insertedCallback.call(element);
           }
           insertChildren(element);
         }
@@ -146,20 +139,17 @@ if (!(document.register || {}).__polyfill__){
 
     function insertChildren(element){
       if (element.childNodes.length) query(element, tokens).forEach(function(el){
-        if (!el._elementupgraded) upgrade(el, true);
-        getTag(el).lifecycle.inserted.call(el);
+        if (!el._elementupgraded) upgrade(el);
+        if (el.insertedCallback) el.insertedCallback.call(el);
       });
     }
     
     function removed(element){
       if (element._elementupgraded) {
-        if (element._suppressObservers) delete element._suppressObservers;
-        else {
-          getTag(element).lifecycle.removed.call(element);
-          if (element.childNodes.length) query(element, tokens).forEach(function(el){
-            removed(el);
-          });
-        }
+        if (element.removedCallback) element.removedCallback.call(element);
+        if (element.childNodes.length) query(element, tokens).forEach(function(el){
+          removed(el);
+        });
       }
     }
     
@@ -229,7 +219,9 @@ if (!(document.register || {}).__polyfill__){
       doc.register = register;
       
       doc.createElement = function createElement(tag){
-        var element = _createElement.call(doc, tag);
+        var base = tags[tag] ? tags[tag].base : null;
+            element = _createElement.call(doc, base || tag);
+        if (base) element.setAttribute('is', tag);
         upgrade(element);
         return element;
       };
@@ -240,7 +232,7 @@ if (!(document.register || {}).__polyfill__){
             last = this.getAttribute(attr);
         _setAttribute.call(this, attr, value);
         if (tag && last != this.getAttribute(attr)) {
-          tag.lifecycle.attributeChanged.call(this, attr, value, last, skip);
+          if (this.attributeChangedCallback) this.attributeChangedCallback.call(this, attr, value, last, skip);
         } 
       };
       
@@ -249,10 +241,11 @@ if (!(document.register || {}).__polyfill__){
         addObserver(doc.documentElement, 'removed', removed);
         
         if (tokens.length) query(doc, tokens).forEach(function(element){
-          upgrade(element, true);
+          upgrade(element);
         });
         
         domready = true;
+        fireEvent(doc, 'WebComponentsReady');
         fireEvent(doc, 'DOMComponentsLoaded');
         fireEvent(doc, '__DOMComponentsLoaded__');
       };
@@ -271,7 +264,8 @@ if (!(document.register || {}).__polyfill__){
       addObserver: addObserver,
       removeObserver: removeObserver,
       observerElement: doc.documentElement,
-      parseMutations: parseMutations,
+      _parseMutations: parseMutations,
+      _insertChildren: insertChildren,
       _inserted: inserted,
       _createElement: _createElement,
       _polyfilled: polyfill
@@ -287,9 +281,12 @@ if (!(document.register || {}).__polyfill__){
 
   var win = window,
     doc = document,
+    regexPseudoSplit = /(\w+(?:\([^\)]+\))?)/g,
+    regexPseudoReplace = /(\w*)(?:\(([^\)]*)\))?/,
+    regexDigits = /(\d+)/g,
     keypseudo = {
       action: function (pseudo, event) {
-        return pseudo.value.match(/(\d+)/g).indexOf(String(event.keyCode)) > -1 == (pseudo.name == 'keypass');
+        return pseudo.value.match(regexDigits).indexOf(String(event.keyCode)) > -1 == (pseudo.name == 'keypass');
       }
     },
     touchFilter = function (custom, event) {
@@ -313,14 +310,13 @@ if (!(document.register || {}).__polyfill__){
     },
     prefix = (function () {
       var styles = win.getComputedStyle(doc.documentElement, ''),
-        pre = (Array.prototype.slice
-          .call(styles)
-          .join('') 
-          .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
-        )[1],
-        dom = ('WebKit|Moz|MS|O').match(new RegExp('(' + pre + ')', 'i'))[1];
+          pre = (Array.prototype.slice
+            .call(styles)
+            .join('') 
+            .match(/-(moz|webkit|ms)-/) || (styles.OLink === '' && ['', 'o'])
+          )[1];
       return {
-        dom: dom,
+        dom: pre == 'ms' ? pre.toUpperCase() : pre,
         lowercase: pre,
         css: '-' + pre + '-',
         js: pre[0].toUpperCase() + pre.substr(1)
@@ -365,6 +361,57 @@ if (!(document.register || {}).__polyfill__){
     return tag;
   }
   
+  function parseAccessor(tag, prop){
+    tag.prototype[prop] = {};
+    var accessor = tag.accessors[prop],
+        attr = accessor.attribute,
+        name = attr && attr.name ? attr.name.toLowerCase() : prop;
+    
+    if (attr) {
+      tag.attributes[name] = attr;
+      tag.attributes[name].setter = prop;
+      var setter = function(value){
+        if (!attr.node || !attr.node.parentNode) {
+          attr.node = attr.property ? this.xtag[attr.property] : attr.selector ? this.querySelector(attr.selector) : this;
+        }
+        var method = 'setAttribute';
+        if (attr.boolean) {
+          if (!value) method = 'removeAttribute';
+          value = '';
+        }
+        this[method](name, value, true);
+        if (attr.node != this) attr.node[method](name, value, true);
+      }
+    }
+    
+    for (var z in accessor) {
+      var key = z.split(':'), type = key[0];
+      if (type == 'get') {
+        key[0] = prop;
+        tag.prototype[prop].get = xtag.applyPseudos(key.join(':'), accessor[z], tag.pseudos);
+      }
+      else if (type == 'set') {
+        key[0] = prop;
+        tag.prototype[prop].set = xtag.applyPseudos(key.join(':'), attr ? function(value){
+          setter.call(this, value);
+          accessor[z].call(this, value);
+        } : accessor[z], tag.pseudos);
+      }
+      else tag.prototype[prop][z] = accessor[z];
+    }
+    
+    if (attr) {
+      if (!tag.prototype[prop].get) {
+        var method = (attr.boolean ? 'has' : 'get') + 'Attribute';
+        tag.prototype[prop].get = function(){
+          return this[method](name);
+        };
+      }
+      if (!tag.prototype[prop].set) tag.prototype[prop].set = setter;
+    }
+    
+  }
+  
 /*** X-Tag Object Definition ***/
 
   var xtag = {
@@ -376,6 +423,7 @@ if (!(document.register || {}).__polyfill__){
       methods: {},
       accessors: {},
       lifecycle: {},
+      attributes: {},
       'prototype': {
         xtag: {
           get: function(){
@@ -387,57 +435,54 @@ if (!(document.register || {}).__polyfill__){
     register: function (name, options) {
       var _name = name.toLowerCase();
       var tag = xtag.tags[_name] = applyMixins(xtag.merge({}, xtag.defaultOptions, options));
-      xtag.attributeSetters[_name] = {};
       
       for (var z in tag.events) tag.events[z] = xtag.parseEvent(z, tag.events[z]);
       for (var z in tag.lifecycle) tag.lifecycle[z.split(':')[0]] = xtag.applyPseudos(z, tag.lifecycle[z], tag.pseudos);
       for (var z in tag.methods) tag.prototype[z.split(':')[0]] = { value: xtag.applyPseudos(z, tag.methods[z], tag.pseudos) };
+      for (var prop in tag.accessors) parseAccessor(tag, prop);
       
-      for (var prop in tag.accessors) {
-        tag.prototype[prop] = {};
-        var accessor = tag.accessors[prop];
-        for (var z in accessor) {
-          var key = z.split(':'), type = key[0];
-          if (type == 'get' || type == 'set') {
-            key[0] = prop;
-            tag.prototype[prop][type] = xtag.applyPseudos(key.join(':'), accessor[z], tag.pseudos);
-          }
-          else tag.prototype[prop][z] = accessor[z];
-        }
-      }
-  
       var attributeChanged = tag.lifecycle.attributeChanged;
-      tag.lifecycle.attributeChanged = function (attr, value, last, skip) {
-        var setter = xtag.attributeSetters[_name][attr.toLowerCase()];
-        if (!skip && setter) this[setter] = value;
-        return attributeChanged ? attributeChanged.apply(this, xtag.toArray(arguments)) : null;
+      tag.prototype.attributeChangedCallback = {
+        value: function(attr, value, last, skip){
+          var obj = tag.attributes[attr.toLowerCase()] || {};
+          if (!skip && obj.setter) this[obj.setter] = value;
+          return attributeChanged ? attributeChanged.apply(this, xtag.toArray(arguments)) : null;
+        }
       };
 
-      var created = tag.lifecycle.created;
-      tag.lifecycle.created = function () {
-        var element = this;
-        tag.pseudos.forEach(function(obj){
-          obj.onAdd.call(element, obj);
-        });
-        xtag.addEvents(this, tag.events);
-        tag.mixins.forEach(function(mixin){
-          if (xtag.mixins[mixin].events) xtag.addEvents(element, xtag.mixins[mixin].events);
-        });
-        return created ? created.apply(this, xtag.toArray(arguments)) : null;
+      var ready = tag.lifecycle.created || tag.lifecycle.ready;
+      tag.prototype.readyCallback = {
+        value: function(){
+          var element = this; 
+          xtag.addEvents(this, tag.events);
+          tag.mixins.forEach(function(mixin){
+            if (xtag.mixins[mixin].events) xtag.addEvents(element, xtag.mixins[mixin].events);
+          });
+          var output = ready ? ready.apply(this, xtag.toArray(arguments)) : null;
+          for (var attr in tag.attributes) if (this.hasAttribute(attr)) {
+            this[tag.attributes[attr].setter] = tag.attributes[attr].boolean ? this.hasAttribute(attr) : this.getAttribute(attr);
+          }
+          tag.pseudos.forEach(function(obj){
+            obj.onAdd.call(element, obj);
+          });
+          return output;
+        }
       };
       
-      var proto = doc.register(_name, {
-        'prototype': 'nodeName' in tag.prototype ? tag.prototype : Object.create((win.HTMLSpanElement || win.HTMLElement).prototype, tag.prototype),
-        'lifecycle':  tag.lifecycle
+      if (tag.lifecycle.inserted) tag.prototype.insertedCallback = { value: tag.lifecycle.inserted };
+      if (tag.lifecycle.removed) tag.prototype.removedCallback = { value: tag.lifecycle.removed };
+      
+      var constructor = doc.register(_name, {
+        'extends': options.extends,
+        'prototype': Object.create((options.extends ? document.createElement(options.extends).constructor : win.HTMLElement).prototype, tag.prototype)
       });
       
-      return proto;
+      return constructor;
     },
 
   /*** Exposed Variables ***/
     mixins: {},
     prefix: prefix,
-    attributeSetters: {},
     captureEvents: ['focus', 'blur'],
     customEvents: {
       overflow: createFlowEvent('over'),
@@ -498,15 +543,6 @@ if (!(document.register || {}).__polyfill__){
         action: function (pseudo, event) {
           return !event.defaultPrevented;
         }
-      },
-      attribute: {
-        onAdd: function(pseudo){
-          var key = (pseudo.value || pseudo.key.split(':')[0]).toLowerCase();
-          xtag.attributeSetters[this.nodeName.toLowerCase()][key] = pseudo.key.split(':')[0];
-        },
-        action: function (pseudo, value) {
-          this.setAttribute(pseudo.value || pseudo.key.split(':')[0], value, true);
-        }
       }
     },
 
@@ -539,19 +575,32 @@ if (!(document.register || {}).__polyfill__){
         element.style[duration] = '';
       });
     },
+    
+    requestFrame: (function(){
+      var raf = win.requestAnimationFrame ||
+        win[prefix.lowercase + 'RequestAnimationFrame'] ||
+        function(fn){ return win.setTimeout(fn, 20) };
+      return function(fn){ 
+        return raf.call(win, fn);
+      }
+    })(),
 
     matchSelector: function (element, selector) {
       return matchSelector.call(element, selector);
     },
     
-    innerHTML: function (element, html) {
-      element.innerHTML = html;
+    set: function (element, method, value) {
+      element[method] = value;
       if (xtag._polyfilled) {
         if (xtag.observerElement._observer) {
-          xtag.parseMutations(xtag.observerElement, xtag.observerElement._observer.takeRecords());
+          xtag._parseMutations(xtag.observerElement, xtag.observerElement._observer.takeRecords());
         }
-        else xtag._inserted(element);
+        else xtag._insertChildren(element);
       }
+    },
+    
+    innerHTML: function(el, html){
+      xtag.set(el, 'innerHTML', html);
     },
 
     hasClass: function (element, klass) {
@@ -574,10 +623,12 @@ if (!(document.register || {}).__polyfill__){
       }).join(' ');
       return element;
     },
+    
     toggleClass: function (element, klass) {
       return xtag[xtag.hasClass(element, klass) ? 'removeClass' : 'addClass'].call(null, element, klass);
 
     },
+    
     query: function (element, selector) {
       return xtag.toArray(element.querySelectorAll(selector));
     },
@@ -607,13 +658,14 @@ if (!(document.register || {}).__polyfill__){
   /*** Pseudos ***/
 
     applyPseudos: function(key, fn, element) {
-      var listener = fn;
+      var listener = fn,
+          pseudos = {};
       if (key.match(':')) {
-        var split = key.match(/(\w+(?:\([^\)]+\))?)/g),
+        var split = key.match(regexPseudoSplit),
             i = split.length;
         while (--i) {
-          split[i].replace(/(\w*)(?:\(([^\)]*)\))?/, function (match, name, value) {
-            var pseudo = xtag.pseudos[name];
+          split[i].replace(regexPseudoReplace, function (match, name, value) {
+            var pseudo = pseudos[i] = Object.create(xtag.pseudos[name]);
                 pseudo.key = key;
                 pseudo.name = name;
                 pseudo.value = value;
@@ -627,7 +679,7 @@ if (!(document.register || {}).__polyfill__){
                     value: value,
                     listener: last
                   };
-              if (pseudo.action.apply(this, [obj].concat(args)) === false) return false;
+              if (pseudo.action && pseudo.action.apply(this, [obj].concat(args)) === false) return false;
               return obj.listener.apply(this, args);
             };
             if (element && pseudo.onAdd) {
@@ -635,6 +687,9 @@ if (!(document.register || {}).__polyfill__){
             }
           });
         }
+      }
+      for (var z in pseudos) {
+        if (pseudos[z].onCompiled) listener = pseudos[z].onCompiled(listener, pseudos[z]);
       }
       return listener;
     },
@@ -678,7 +733,11 @@ if (!(document.register || {}).__polyfill__){
     },
 
     addEvents: function (element, events) {
-      for (var z in events) xtag.addEvent(element, z, events[z]);
+      var listeners = {};
+      for (var z in events) {
+        listeners[z] = xtag.addEvent(element, z, events[z]);
+      }
+      return listeners;
     },
 
     removeEvent: function (element, type, fn) {
@@ -688,7 +747,12 @@ if (!(document.register || {}).__polyfill__){
       xtag.toArray(event.base).forEach(function (name) {
         element.removeEventListener(name, fn);
       });
+    },
+    
+    removeEvents: function(element, listeners){
+      for (var z in listeners) xtag.removeEvent(element, z, listeners[z]);
     }
+    
   };
   
   xtag.typeOf = doc.register.__polyfill__.typeOf;
