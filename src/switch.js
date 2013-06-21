@@ -44,12 +44,12 @@
       }
     },
     events:{
-      'tap:delegate(div)': function(e){
+      'tapend:preventable:delegate(div)': function(e){
         if (!e.currentTarget.disabled){
           e.currentTarget.checked = !e.currentTarget.checked;
         }
       },
-      'keydown:keypass(32)': function(){
+      'keydown:preventable:keypass(32)': function(){
         if (!this.disabled){
           this.checked = !this.checked;
         }
