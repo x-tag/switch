@@ -13,6 +13,10 @@
 
     <style type="text/css">
 
+      h4 {
+        margin: 1rem 0 0.5rem 0;
+      }
+
       label {
         display: block;
 
@@ -71,8 +75,25 @@
         height: 90px;
       }
 
-      #resize-demo .x-switch-background {
+      #styled {
+        border-color: #333;
+        border-width: 2px;
+        border-radius: 0;
+        font-family: sans-serif;
+        color: #999;
+        width: 90px;
+        height: 42px;
+      }
 
+      #styled .x-switch-knob {
+        border-radius: 0;
+        width: 30px;
+        background: #e58f33;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.9);
+      }
+
+      #styled, #styled[checked], #styled .x-switch-background {
+        background: #555;
       }
     </style>
   </head>
@@ -95,6 +116,9 @@
 
     <h4>Resized switch</h4>
     <x-switch id="resize-demo" onText="Pizza" offText="CheeseBurger"></x-switch>
+
+    <h4>Restyled switch</h4>
+    <x-switch id="styled" onText="" offText=""></x-switch>
 
   </body>
 
