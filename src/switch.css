@@ -23,6 +23,7 @@ x-switch input {
   vertical-align: top;
   width: 2.25em;
   height: 1em;
+  overflow: hidden;
   border-radius: inherit;
   background-color: #DA5F61;
   border: 1px solid rgba(0,0,0,0.3);
