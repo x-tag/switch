@@ -121,7 +121,11 @@ x-switch input:disabled + .x-switch-slider {
   box-shadow: none;
 }
 
-x-switch input:disabled + .x-switch-slider .x-switch-knob-box {
+x-switch input:disabled + .x-switch-slider .x-switch-knob {
   background: #dadada;
   border-color: rgba(0,0,0,0.3);
+}
+
+x-switch input:disabled + .x-switch-slider:after {
+  visibility: hidden;
 }
