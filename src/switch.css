@@ -51,7 +51,7 @@ x-switch input {
 }
 
 
-.x-switch-knob-wrap, .x-switch-knob {
+.x-switch-knob-wrap, .x-switch-knob-box {
   -webkit-transition: -webkit-transform 0.25s ease;
   -moz-transition: -moz-transform 0.25s ease;
   transition: transform 0.25s ease;
@@ -72,9 +72,22 @@ x-switch input {
   border-radius: inherit;
 }
 
-.x-switch-knob {
-  display: block;
+.x-switch-knob-box {
+  position: absolute;
   height: 100%;
+  border-radius: inherit;
+}
+
+.x-switch-knob-box img {
+	display: block;
+	height: 100%;
+}
+
+.x-switch-knob {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
   border-radius: inherit;
   background: -webkit-linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
   background: -moz-linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
@@ -91,7 +104,7 @@ x-switch input:checked + .x-switch-slider .x-switch-knob-wrap {
   transform: translateX(100%);
 }
 
-x-switch input:checked + .x-switch-slider .x-switch-knob {
+x-switch input:checked + .x-switch-slider .x-switch-knob-box {
   -webkit-transform: translateX(-100%);
   -moz-transform: translateX(-100%);
   transform: translateX(-100%);
@@ -108,7 +121,7 @@ x-switch input:disabled + .x-switch-slider {
   box-shadow: none;
 }
 
-x-switch input:disabled + .x-switch-slider .x-switch-knob {
+x-switch input:disabled + .x-switch-slider .x-switch-knob-box {
   background: #dadada;
   border-color: rgba(0,0,0,0.3);
 }

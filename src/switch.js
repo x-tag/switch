@@ -4,7 +4,10 @@
     '<input type="checkbox" />' +
     '<div class="x-switch-slider x-switch-icons">' +
       '<div class="x-switch-knob-wrap">' +
-        '<img class="x-switch-knob" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />' + 
+        '<div class="x-switch-knob-box">' +
+			'<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />' +
+			'<div class="x-switch-knob"></div>' +
+		'</div>' + 
       '</div>' +
     '</div>' +
   '</label>');
