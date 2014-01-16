@@ -1,42 +1,21 @@
 (function(){
 
-  var template =  '<input type="hidden" />' +
-  '<div>' +
-    '<div class="x-switch-text" ontext="ON" offtext="OFF"></div>' +
-    '<div><div class="x-switch-knob"><br/></div></div>' +
-    '<div class="x-switch-knob">' +
-      '<div class="x-switch-background">' +
-        '<div class="x-switch-text x-switch-on" ontext="ON" offtext="OFF"></div>' +
-        '<div><div class="x-switch-knob"><br/></div></div>' +
-        '<div class="x-switch-text x-switch-off" ontext="ON" offtext="OFF"></div>' +
+  var template = xtag.createFragment('<label>' +
+    '<input type="checkbox" />' +
+    '<div class="x-switch-slider x-switch-icons">' +
+      '<div class="x-switch-knob-wrap">' +
+        '<img class="x-switch-knob" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />' + 
       '</div>' +
     '</div>' +
-  '</div>';
-
-  function textSetter(state){
-    return {
-      attribute: { name: state + 'text' },
-      get: function(){
-        var attrValue = this.getAttribute(state + 'text');
-        return attrValue !== null ? attrValue : state;
-      },
-      set: function(text){
-        xtag.query(this, '[' + state + 'text]').forEach(function(el){
-          el.setAttribute(state + 'text', text);
-        });
-      }
-    };
-  }
+  '</label>');
 
   xtag.register('x-switch', {
     lifecycle: {
       created: function(){
         this.setAttribute('tabindex', this.getAttribute('tabindex') || 0);
-        this.innerHTML = template;
-        this.onText = this.onText;
-        this.offText = this.offText;
-        this.checked = this.checked;
-        this.formName = this.formName;
+        this.appendChild(template.cloneNode(true));
+		this.input = this.querySelector('input');
+		this.input.name = this.name;
       }
     },
     methods: {
@@ -45,36 +24,21 @@
       }
     },
     events:{
-      'tapend:preventable:delegate(div)': function(e){
-        if (!e.currentTarget.disabled){
-          e.currentTarget.checked = !e.currentTarget.checked;
-        }
-      },
       'keydown:preventable:keypass(32)': function(){
-        if (!this.disabled){
-          this.checked = !this.checked;
-        }
+        if (!this.disabled) this.checked = !this.checked;
       }
     },
     accessors: {
-      onText: textSetter('on'),
-      offText: textSetter('off'),
-      checked: {
-        attribute: { boolean: true },
-        set: function(state){
-          this.firstElementChild.value = !!state;
-        }
+	  name: {
+        attribute: { selector: 'input' }
       },
       disabled: {
         attribute: { boolean: true, selector: 'input' }
       },
-      formName: {
-        attribute: { name: 'formname' },
-        get: function(){
-          return this.firstElementChild.getAttribute('name') || this.getAttribute('formName');
-        },
-        set: function(value){
-          this.firstElementChild.setAttribute('name', value);
+      checked: {
+        attribute: { boolean: true, selector: 'input' },
+        set: function(state){
+          this.input.checked = !!state;
         }
       }
     }

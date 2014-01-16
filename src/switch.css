@@ -1,129 +1,113 @@
+
 x-switch {
+  display: inline-block;
+  font-size: 85%;
+  border-radius: 100px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+x-switch label {
+  border-radius: inherit;
+  cursor: pointer;
+}
+
+x-switch input {
+  display: none;
+}
+
+.x-switch-slider {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 2.25em;
+  height: 1em;
+  border-radius: inherit;
+  background-color: #DA5F61;
+  border: 1px solid rgba(0,0,0,0.3);
+  box-shadow: 0 1px 1px 0px rgba(0,0,0,0.2) inset;
+  -webkit-transition: background-color 0.4s ease;
+  -moz-transition: background-color 0.4s ease;
+  transition: background-color 0.4s ease;
+}
+
+.x-switch-slider:before, .x-switch-slider:after {
 	display: inline-block;
-	position: relative;
-	border: 1px solid;
-	text-align: center;
-	font-family: monospace;
-	overflow: hidden;
-	cursor: pointer;
+	content: " ";
+	width: 50%;
+	height: 100%;
 }
 
-x-switch[disabled] {
-    opacity: 0.5;
+.x-switch-slider:before {
+	background: no-repeat center center url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAzMiAzMiI+Cgk8cGF0aCBkPSJNMjcgNGwtMTUgMTUtNy03LTUgNSAxMiAxMiAyMC0yMHoiIGZpbGw9IiNmZmZmZmYiIC8+Cjwvc3ZnPgo=);
+	background-size: 68%;
 }
 
-x-switch > div {
-	overflow: hidden;
-    height: 100%;
+.x-switch-slider:after {
+	background: no-repeat center center url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAzMiAzMiI+Cgk8cGF0aCBkPSJNMzEuNzA4IDI1LjcwOGMtMC0wLTAtMC0wLTBsLTkuNzA4LTkuNzA4IDkuNzA4LTkuNzA4YzAtMCAwLTAgMC0wIDAuMTA1LTAuMTA1IDAuMTgtMC4yMjcgMC4yMjktMC4zNTcgMC4xMzMtMC4zNTYgMC4wNTctMC43NzEtMC4yMjktMS4wNTdsLTQuNTg2LTQuNTg2Yy0wLjI4Ni0wLjI4Ni0wLjcwMi0wLjM2MS0xLjA1Ny0wLjIyOS0wLjEzIDAuMDQ4LTAuMjUyIDAuMTI0LTAuMzU3IDAuMjI4IDAgMC0wIDAtMCAwbC05LjcwOCA5LjcwOC05LjcwOC05LjcwOGMtMC0wLTAtMC0wLTAtMC4xMDUtMC4xMDQtMC4yMjctMC4xOC0wLjM1Ny0wLjIyOC0wLjM1Ni0wLjEzMy0wLjc3MS0wLjA1Ny0xLjA1NyAwLjIyOWwtNC41ODYgNC41ODZjLTAuMjg2IDAuMjg2LTAuMzYxIDAuNzAyLTAuMjI5IDEuMDU3IDAuMDQ5IDAuMTMgMC4xMjQgMC4yNTIgMC4yMjkgMC4zNTcgMCAwIDAgMCAwIDBsOS43MDggOS43MDgtOS43MDggOS43MDhjLTAgMC0wIDAtMCAwLTAuMTA0IDAuMTA1LTAuMTggMC4yMjctMC4yMjkgMC4zNTctMC4xMzMgMC4zNTUtMC4wNTcgMC43NzEgMC4yMjkgMS4wNTdsNC41ODYgNC41ODZjMC4yODYgMC4yODYgMC43MDIgMC4zNjEgMS4wNTcgMC4yMjkgMC4xMy0wLjA0OSAwLjI1Mi0wLjEyNCAwLjM1Ny0wLjIyOSAwLTAgMC0wIDAtMGw5LjcwOC05LjcwOCA5LjcwOCA5LjcwOGMwIDAgMCAwIDAgMCAwLjEwNSAwLjEwNSAwLjIyNyAwLjE4IDAuMzU3IDAuMjI5IDAuMzU2IDAuMTMzIDAuNzcxIDAuMDU3IDEuMDU3LTAuMjI5bDQuNTg2LTQuNTg2YzAuMjg2LTAuMjg2IDAuMzYyLTAuNzAyIDAuMjI5LTEuMDU3LTAuMDQ5LTAuMTMtMC4xMjQtMC4yNTItMC4yMjktMC4zNTd6IiBmaWxsPSIjZmZmZmZmIiAvPgo8L3N2Zz4K);
+	background-size: 56%;
 }
 
-x-switch > div > div {
-	display: table-cell;
-	width: 0;
-	vertical-align: middle;
+
+.x-switch-knob-wrap, .x-switch-knob {
+  -webkit-transition: -webkit-transform 0.25s ease;
+  -moz-transition: -moz-transform 0.25s ease;
+  transition: transform 0.25s ease;
+  -webkit-transform: translateX(0%);
+  -moz-transform: translateX(0%);
+  transform: translateX(0%);
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden; 
+  backface-visibility: hidden; 
 }
 
-x-switch > div > div:not(.x-switch-knob) {
-	visibility: hidden;
-}
-
-.x-switch-text {
-	padding: 2px 4px;
-	white-space: nowrap;
-}
-
-.x-switch-text:before,
-x-switch > div > .x-switch-knob:last-child .x-switch-text:last-child:after {
-	display: block;
-	content: attr(ontext);
-}
-
-.x-switch-text:after,
-x-switch > div > .x-switch-knob:last-child .x-switch-text:last-child:before {
-	display: block;
-	content: attr(offtext);
-}
-
-.x-switch-text:after {
-	height: 0 !important;
-	margin-top: 0 !important;
-	margin-bottom: 0 !important;
-	padding-top: 0 !important;
-	padding-bottom: 0 !important;
-	border-top: 0 !important;
-	border-bottom: 0 !important;
-	overflow: hidden !important;
-	visibility: hidden !important;
+.x-switch-knob-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
 }
 
 .x-switch-knob {
-	width: 20px;
-	height: 100%;
-	background: black;
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: -webkit-linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
+  background: -moz-linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
+  background: linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
+  border: 1px solid rgba(0,0,0,0.6);
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
-x-switch > div > .x-switch-knob:last-child {
-	position: absolute;
-	top: 0;
-	left: 0;
-	-webkit-transition: -webkit-transform 0.3s ease, left 0.3s ease;
-	-moz-transition: -moz-transform 0.3s ease, left 0.3s ease;
-	-ms-transition: -ms-transform 0.3s ease, left 0.3s ease;
-	-o-transition: -o-transform 0.3s ease, left 0.3s ease;
-	transition: transform 0.3s ease, left 0.3s ease;
+x-switch input:checked + .x-switch-slider .x-switch-knob-wrap {
+  -webkit-transform: translateX(100%);
+  -moz-transform: translateX(100%);
+  transform: translateX(100%);
 }
 
-x-switch > div > .x-switch-knob:last-child > div {
-	display: table;
-	position: absolute;
-	height: 100%;
-	left: 50%;
-	-webkit-transform: translate(-50%);
-	-moz-transform: translate(-50%);
-	-ms-transform: translate(-50%);
-	-o-transform: translate(-50%);
-	transform: translate(-50%);
+x-switch input:checked + .x-switch-slider .x-switch-knob {
+  -webkit-transform: translateX(-100%);
+  -moz-transform: translateX(-100%);
+  transform: translateX(-100%);
 }
 
-x-switch > div > .x-switch-knob:last-child > div > div {
-	display: table-cell;
-	height: 100%;
-	vertical-align: middle;
+/* STYLES */
+
+x-switch input:checked + .x-switch-slider {
+  background-color: #63B88F;
 }
 
-x-switch[checked] > div > .x-switch-knob:last-child {
-	left: 100%;
-	-webkit-transform: translate(-100%);
-	-moz-transform: translate(-100%);
-	-ms-transform: translate(-100%);
-	-o-transform: translate(-100%);
-	transform: translate(-100%);
+x-switch input:disabled + .x-switch-slider {
+  background: #d0d0d0;
+  box-shadow: none;
 }
 
-.x-switch-background {
-	background: -webkit-linear-gradient(left, limegreen 50%, tomato 50%);
-	background: -moz-linear-gradient(left, limegreen 50%, tomato 50%);
-	background: -ms-linear-gradient(left, limegreen 50%, tomato 50%);
-	background: -o-linear-gradient(left, limegreen 50%, tomato 50%);
-	background: linear-gradient(left, limegreen 50%, tomato 50%);
+x-switch input:disabled + .x-switch-slider .x-switch-knob {
+  background: #dadada;
+  border-color: rgba(0,0,0,0.3);
 }
-
-/*** WEBKIT HACK
-Background color state switching workaround for overflow clipping render bug in WebKit: https://bugs.webkit.org/show_bug.cgi?id=77572 - http://code.google.com/p/chromium/issues/detail?id=157218
-This was coded in such a way that it will gracefully upgrade to the better behavior when WebKit gets its shit together
-***/
-
-.x-switch-background {
-	background: -webkit-linear-gradient(top, rgba(0,0,0,0), rgba(0,0,0,0));
-}
-
-x-switch {
-	background: tomato;
-	-webkit-transition: background-color 0.25s ease;
-}
-
-x-switch[checked] {
-	background: limegreen;
-}
-
-/*** END WEBKIT HACK ***/
