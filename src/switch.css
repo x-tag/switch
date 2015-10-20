@@ -3,6 +3,7 @@ x-switch {
   display: inline-block;
   font-size: 85%;
   border-radius: 100px;
+  line-height: 0;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
@@ -59,8 +60,8 @@ x-switch input {
   -moz-transform: translateX(0%);
   transform: translateX(0%);
   -webkit-backface-visibility: hidden;
-  -moz-backface-visibility: hidden; 
-  backface-visibility: hidden; 
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .x-switch-knob-wrap {

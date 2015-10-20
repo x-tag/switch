@@ -1,29 +1,29 @@
 (function(){
 
-  var template = xtag.createFragment('<label>' +
-    '<input type="checkbox" />' +
-    '<div class="x-switch-slider x-switch-icons">' +
-      '<div class="x-switch-knob-wrap">' +
-        '<div class="x-switch-knob-box">' +
-			'<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />' +
-			'<div class="x-switch-knob"></div>' +
-		'</div>' + 
-      '</div>' +
-    '</div>' +
-  '</label>');
-
   xtag.register('x-switch', {
+    content: function(){/*
+      <label>
+        <input type="checkbox" />
+        <div class="x-switch-slider x-switch-icons">
+          <div class="x-switch-knob-wrap">
+            <div class="x-switch-knob-box">
+        			<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+        			<div class="x-switch-knob"></div>
+        	  </div>
+          </div>
+        </div>
+      </label>
+    */},
     lifecycle: {
       created: function(){
         this.setAttribute('tabindex', this.getAttribute('tabindex') || 0);
-        this.appendChild(template.cloneNode(true));
-		this.input = this.querySelector('input');
-		this.input.name = this.name;
+    		this.xtag.input = this.querySelector('input');
+    		this.xtag.input.name = this.name;
       }
     },
     methods: {
       toggle: function(state){
-        this.checked = typeof state == 'undefined' ? (this.checked ? false : true) : state;
+        this.checked = state == undefined ? (this.checked ? false : true) : state;
       }
     },
     events:{
@@ -32,16 +32,16 @@
       }
     },
     accessors: {
-	  name: {
-        attribute: { selector: 'input' }
+	    name: {
+        attribute: { property: 'input' }
       },
       disabled: {
-        attribute: { boolean: true, selector: 'input' }
+        attribute: { boolean: true, property: 'input' }
       },
       checked: {
-        attribute: { boolean: true, selector: 'input' },
+        attribute: { boolean: true, property: 'input' },
         set: function(state){
-          this.input.checked = !!state;
+          this.xtag.input.checked = !!state;
         }
       }
     }
