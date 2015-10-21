@@ -1,7 +1,7 @@
 {
 	"name": "Switch",
 	"tagName": "x-switch",
-	"version": "0.2.3",
+	"version": "0.2.4",
 	"author": "Daniel Buchner",
 	"description": "Switch provides you a slick iPhone-esque toggle switch with a single line",
 	"images": [],
