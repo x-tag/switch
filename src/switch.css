@@ -1,12 +1,13 @@
 
 x-switch {
   display: inline-block;
-  font-size: 1.25em;
+  font-size: 1.4em;
   line-height: 0;
   border-radius: 100em;
   background-color: #DA5F61;
-  border: 1px solid rgba(0,0,0,0.3);
-  box-shadow: 0 1px 1px 0px rgba(0,0,0,0.2) inset;
+  border: 1px solid rgba(0,0,0,0.2);
+  -webkit-box-shadow: 0 1px 1px -1px rgba(0,0,0,0.2) inset;
+  box-shadow: 0 1px 1px -1px rgba(0,0,0,0.2) inset;
   -webkit-transition: background-color 0.25s ease;
   -moz-transition: background-color 0.25s ease;
   transition: background-color 0.25s ease;
@@ -21,7 +22,7 @@ x-switch {
 x-switch label {
   position: relative;
   height: 1em;
-  width: 2.1em;
+  width: 2em;
   border-radius: inherit;
   cursor: pointer;
 }
@@ -33,20 +34,19 @@ x-switch input {
 .x-switch-knob {
   display: block;
   height: 100%;
+  background: #fff;
   border-radius: inherit;
-  background: -webkit-linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
-  background: -moz-linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
-  background: linear-gradient(rgba(255,255,255,0.2), rgba(0,0,0,0.2)),  #fff;
-  border: 1px solid rgba(0,0,0,0.6);
+  -webkit-box-shadow: 0 1px 2px 0px rgba(0,0,0,0.4);
+  box-shadow: 0 1px 2px 0px rgba(0,0,0,0.4);
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   -webkit-transition: -webkit-transform 0.25s ease;
   -moz-transition: -moz-transform 0.25s ease;
   transition: transform 0.25s ease;
-  -webkit-transform: translateX(0%);
-  -moz-transform: translateX(0%);
-  transform: translateX(0%);
+  -webkit-transform: translateX(0%) scale(0.8);
+  -moz-transform: translateX(0%) scale(0.8);
+  transform: translateX(0%) scale(0.8);
   -webkit-backface-visibility: hidden;
   -moz-backface-visibility: hidden;
   backface-visibility: hidden;
@@ -59,17 +59,20 @@ x-switch[checked] {
 }
 
 x-switch[checked] .x-switch-knob {
-  -webkit-transform: translateX(110%);
-  -moz-transform: translateX(110%);
-  transform: translateX(110%);
+  -webkit-transform: translateX(100%) scale(0.8);
+  -moz-transform: translateX(100%) scale(0.8);
+  transform: translateX(100%) scale(0.8);
 }
 
 x-switch[disabled] {
   background: #d0d0d0;
+  -webkit-box-shadow: none;
   box-shadow: none;
 }
 
 x-switch[disabled] .x-switch-knob {
-  background: #dadada;
+  background: #eee;
   border-color: rgba(0,0,0,0.3);
+  -webkit-box-shadow: none;
+  box-shadow: none;
 }
