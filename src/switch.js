@@ -4,11 +4,7 @@
     content: function(){/*
       <label>
         <input type="checkbox" />
-        <div class="x-switch-slider x-switch-icons">
-          <div class="x-switch-knob-wrap">
-        		<img class="x-switch-knob" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
-          </div>
-        </div>
+        <img class="x-switch-knob" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
       </label>
     */},
     lifecycle: {
@@ -24,6 +20,9 @@
       }
     },
     events:{
+      change: function(e){
+        this.checked = e.target.checked;
+      },
       'keydown:preventable:keypass(32)': function(){
         if (!this.disabled) this.checked = !this.checked;
       }
