@@ -1,6 +1,7 @@
 (function(){
 
   xtag.register('x-switch', {
+    mixins: ['input'],
     content: function(){/*
       <label>
         <input type="checkbox" />
@@ -10,13 +11,11 @@
     lifecycle: {
       created: function(){
         this.setAttribute('tabindex', this.getAttribute('tabindex') || 0);
-    		this.xtag.input = this.querySelector('input');
-    		this.xtag.input.name = this.name;
       }
     },
     methods: {
       toggle: function(state){
-        this.checked = state == undefined ? (this.checked ? false : true) : state;
+        this.checked = state === undefined ? (this.checked ? false : true) : state;
       }
     },
     events:{
@@ -28,12 +27,6 @@
       }
     },
     accessors: {
-	    name: {
-        attribute: { property: 'input' }
-      },
-      disabled: {
-        attribute: { boolean: true, property: 'input' }
-      },
       checked: {
         attribute: { boolean: true, property: 'input' },
         set: function(state){

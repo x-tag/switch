@@ -1,7 +1,7 @@
 {
   "name": "x-switch",
   "description": "Switch provides you a slick iPhone-esque toggle switch with a single line.",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "keywords": [
     "web-components",
     "switch",
@@ -15,6 +15,7 @@
     "src/switch.css"
   ],
   "dependencies": {
-    "x-tag-core": "*"
+    "x-tag-core": "*",
+    "x-tag-mixin-input": "*"
   }
 }
