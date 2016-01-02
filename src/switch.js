@@ -1,5 +1,13 @@
 (function(){
 
+  xtag.addEvents(document, {
+    reset: function(e){
+      if (e.target.nodeName == 'FORM') xtag.query(e.target, 'x-switch').forEach(function(node){
+        node.checked = false;
+      })
+    }
+  });
+
   xtag.register('x-switch', {
     mixins: ['input'],
     content: function(){/*

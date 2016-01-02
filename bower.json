@@ -1,7 +1,7 @@
 {
   "name": "x-switch",
   "description": "Switch provides you a slick iPhone-esque toggle switch with a single line.",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "keywords": [
     "web-components",
     "switch",
